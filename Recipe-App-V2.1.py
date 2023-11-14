@@ -91,3 +91,8 @@ class RecipeSearchApp(tk.Tk): # Inherit from tk.Tk class
 if __name__ == "__main__": # If the script is executed directly
     app = RecipeSearchApp() # Create an instance of the RecipeSearchApp class
     app.mainloop() # Run the main loop
+
+
+
+###########
+## Notes
