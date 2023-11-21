@@ -1,7 +1,9 @@
 import tkinter as tk
 from tkinter import ttk
+from PIL import Image, ImageTk
 import requests
 import keys
+import io
 
 # Base URL
 URL = "https://api.edamam.com/api/recipes/v2"
@@ -9,6 +11,7 @@ URL = "https://api.edamam.com/api/recipes/v2"
 class RecipeSearchApp(tk.Tk):
     def __init__(self):
         super().__init__()
+        self.tkimg_lst = []
         self.title("Recipe Search")
 
         # Search Query
@@ -92,13 +95,18 @@ class RecipeSearchApp(tk.Tk):
                 label = recipe['recipe']['label']
                 calories = recipe['recipe']['calories']
                 ingredients = recipe['recipe']['ingredientLines']
-                image = recipe['recipe'].get('image', 'No image available')
-
-                result_text = f"Recipe name: {label}\nCalories: {calories} kcal\nIngredients:\n"
+                image_lst = recipe['recipe']["images"]
+                img_small_url = image_lst["SMALL"]["url"]
+                img_data = requests.get(img_small_url).content
+                PILimg = Image.open(io.BytesIO(img_data))
+                img_tk = ImageTk.PhotoImage(PILimg)
+                self.tkimg_lst.append(img_tk)
+                result_text = f"\nRecipe name: {label}\nCalories: {calories} kcal\nIngredients:\n"
                 for ingredient in ingredients:
                     result_text += f"- {ingredient}\n"
-                result_text += f"Image: {image}\n\n"
                 self.result_text.insert(tk.END, result_text)
+                self.result_text.image_create(tk.END, image=img_tk) # "print" image into text widget
+                #self.result_text.see(tk.END)
         else:
             self.result_text.delete("1.0", tk.END)
             self.result_text.insert(tk.END, "No recipes found")
@@ -107,3 +115,9 @@ class RecipeSearchApp(tk.Tk):
 if __name__ == "__main__":
     app = RecipeSearchApp()
     app.mainloop()
+
+
+### dropdown for sort by (reasonable dafualt)
+### have only one search button
+## "start search" instead of the two buttons 
+## add scroll bar to the text area
