@@ -6,16 +6,18 @@ class MyApp(tk.Tk):
         super().__init__()
 
         self.button = tk.Button(self, text="Click me", command=self.insert_text_and_image)
-        self.button.pack()
+        self.button.grid(row=0, column=0, sticky='nsew')
 
-        self.text_widget = tk.Text(self)
-        self.text_widget.pack(side="left")
+        self.text_frame = tk.Frame(self)
+        self.text_frame.grid(row=1, column=0, sticky='nsew')
 
-        self.scrollbar = tk.Scrollbar(self)
-        self.scrollbar.pack(side="right", fill="y")
+        self.text_widget = tk.Text(self.text_frame)
+        self.text_widget.grid(row=0, column=0, sticky='nsew')
+
+        self.scrollbar = tk.Scrollbar(self.text_frame, command=self.text_widget.yview)
+        self.scrollbar.grid(row=0, column=1, sticky='ns')
 
         self.text_widget.config(yscrollcommand=self.scrollbar.set)
-        self.scrollbar.config(command=self.text_widget.yview)
 
         # this has to be a list b/c we need to store any image we add to the text widget
         # and keep it around. If we just have a single attribute for a PhoteImage, the next 
