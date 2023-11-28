@@ -45,27 +45,43 @@ class RecipeSearchApp(tk.Tk):
         self.sort_by_entry = tk.Entry(self)
         self.sort_by_entry.grid(row=3, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
 
-        # Search Buttons
-        self.search_by_meal_button = tk.Button(self, text="Search by Meal Type", command=lambda: self.start_search("meal"))
-        self.search_by_meal_button.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
-        self.search_by_calories_button = tk.Button(self, text="Search by Calories", command=lambda: self.start_search("calories"))
-        self.search_by_calories_button.grid(row=4, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
+        # Search Button
+        self.start_search_button = tk.Button(self, text="Start Search", command=self.start_search)
+        self.start_search_button.grid(row=4, column=0, columnspan=3, padx=10, pady=10, sticky="ew")
+
+        #Search Buttons [OLD Version]
+        #self.search_by_meal_button = tk.Button(self, text="Search by Meal Type", command=lambda: self.start_search("meal"))
+        #self.search_by_meal_button.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
+        #self.search_by_calories_button = tk.Button(self, text="Search by Calories", command=lambda: self.start_search("calories"))
+        #self.search_by_calories_button.grid(row=4, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
 
         # Search Results Text
         self.result_text = tk.Text(self, height=10, width=50)
         self.result_text.grid(row=5, column=0, columnspan=4, padx=10, pady=10)
 
-    def start_search(self, search_type):
+    def start_search(self):
         query = self.query_entry.get()
         meal_type = self.meal_type_var.get()
         calories_min = self.calories_min_entry.get()
         calories_max = self.calories_max_entry.get()
         sort_by = self.sort_by_entry.get()
 
-        if search_type == "meal":
-            recipes = self.search_edamam_recipes(query, meal_type=meal_type, sort_by=sort_by)
-        elif search_type == "calories":
-            recipes = self.search_edamam_recipes(query, meal_type=meal_type, calories=f"{calories_min}-{calories_max}", sort_by=sort_by)
+        # Determine the search type based on user input
+        search_type = "meal" if meal_type != "Any" else "calories"
+
+        recipes = self.search_edamam_recipes(query, meal_type=meal_type, calories=f"{calories_min}-{calories_max}", sort_by=sort_by)
+    
+    #def start_search(self, search_type): [OLD Version]
+        #query = self.query_entry.get()
+        #meal_type = self.meal_type_var.get()
+        #calories_min = self.calories_min_entry.get()
+        #calories_max = self.calories_max_entry.get()
+        #sort_by = self.sort_by_entry.get()
+
+        #if search_type == "meal":
+            #recipes = self.search_edamam_recipes(query, meal_type=meal_type, sort_by=sort_by)
+        #elif search_type == "calories":
+            #recipes = self.search_edamam_recipes(query, meal_type=meal_type, calories=f"{calories_min}-{calories_max}", sort_by=sort_by)
 
         self.display_search_results(recipes)
 
