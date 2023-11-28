@@ -2,6 +2,9 @@ import tkinter as tk
 from tkinter import ttk
 import requests
 import keys
+import tkinter.scrolledtext as scrolledtext
+import urllib.parse 
+
 
 # Base URL
 URL = "https://api.edamam.com/api/recipes/v2"
@@ -39,49 +42,37 @@ class RecipeSearchApp(tk.Tk):
         self.calories_max_entry = tk.Entry(self.calories_frame, width=5)
         self.calories_max_entry.pack(side="left", padx=0)
 
-        # Sort By
+        # Sort By Dropdown
         self.sort_by_label = tk.Label(self, text="Sort by:")
         self.sort_by_label.grid(row=3, column=0, padx=10, pady=10, sticky="e")
-        self.sort_by_entry = tk.Entry(self)
-        self.sort_by_entry.grid(row=3, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
+        self.sort_by_var = tk.StringVar(self)
+        self.sort_by_var.set("")  # Default value
+        self.sort_by_dropdown = ttk.Combobox(self, textvariable=self.sort_by_var, values=["", "Meal type", "Ingredients", "Calories"])
+        self.sort_by_dropdown.grid(row=3, column=1, padx=10, pady=10, sticky="ew", columnspan=2)
 
         # Search Button
         self.start_search_button = tk.Button(self, text="Start Search", command=self.start_search)
         self.start_search_button.grid(row=4, column=0, columnspan=3, padx=10, pady=10, sticky="ew")
-
-        #Search Buttons [OLD Version]
-        #self.search_by_meal_button = tk.Button(self, text="Search by Meal Type", command=lambda: self.start_search("meal"))
-        #self.search_by_meal_button.grid(row=4, column=0, padx=10, pady=10, sticky="ew")
-        #self.search_by_calories_button = tk.Button(self, text="Search by Calories", command=lambda: self.start_search("calories"))
-        #self.search_by_calories_button.grid(row=4, column=1, columnspan=2, padx=10, pady=10, sticky="ew")
-
-        # Search Results Text
-        self.result_text = tk.Text(self, height=10, width=50)
-        self.result_text.grid(row=5, column=0, columnspan=4, padx=10, pady=10)
+        
+        self.result_text = scrolledtext.ScrolledText(self, height=10, width=50, wrap="word")
+        self.result_text.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
 
     def start_search(self):
         query = self.query_entry.get()
         meal_type = self.meal_type_var.get()
         calories_min = self.calories_min_entry.get()
         calories_max = self.calories_max_entry.get()
-        sort_by = self.sort_by_entry.get()
+        sort_by = self.sort_by_var.get()
 
         # Determine the search type based on user input
         search_type = "meal" if meal_type != "Any" else "calories"
 
         recipes = self.search_edamam_recipes(query, meal_type=meal_type, calories=f"{calories_min}-{calories_max}", sort_by=sort_by)
     
-    #def start_search(self, search_type): [OLD Version]
-        #query = self.query_entry.get()
-        #meal_type = self.meal_type_var.get()
-        #calories_min = self.calories_min_entry.get()
-        #calories_max = self.calories_max_entry.get()
-        #sort_by = self.sort_by_entry.get()
-
-        #if search_type == "meal":
-            #recipes = self.search_edamam_recipes(query, meal_type=meal_type, sort_by=sort_by)
-        #elif search_type == "calories":
-            #recipes = self.search_edamam_recipes(query, meal_type=meal_type, calories=f"{calories_min}-{calories_max}", sort_by=sort_by)
+        if search_type == "meal":
+            recipes = self.search_edamam_recipes(query, meal_type=meal_type, sort_by=sort_by)
+        elif search_type == "calories":
+            recipes = self.search_edamam_recipes(query, meal_type=meal_type, calories=f"{calories_min}-{calories_max}", sort_by=sort_by)
 
         self.display_search_results(recipes)
 
@@ -96,6 +87,13 @@ class RecipeSearchApp(tk.Tk):
             "calories": calories,
             "sort": sort_by
         }
+
+        # Omit the "mealType" parameter if meal_type is "Any"
+        if meal_type == "Any":
+            del params["mealType"]
+
+        url = f"{URL}?{urllib.parse.urlencode(params)}"
+        print("API URL:", url)
 
         response = requests.get(URL, params=params)
         if response.status_code == 200:
@@ -127,3 +125,11 @@ class RecipeSearchApp(tk.Tk):
 if __name__ == "__main__":
     app = RecipeSearchApp()
     app.mainloop()
+
+
+# Added scroll bar to the result text box
+# Fixed the bug where "Any" would not pull results
+# Added drop down menu for sorting
+# Replaced the two search buttons with one search button
+# Fix sorting functionality?
+# Images not displaying in the text box anymore!
