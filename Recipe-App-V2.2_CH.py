@@ -133,3 +133,5 @@ if __name__ == "__main__":
 # Replaced the two search buttons with one search button
 # Fix sorting functionality?
 # Images not displaying in the text box anymore!
+    # Meeting Notes: 
+        
