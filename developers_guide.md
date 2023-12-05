@@ -30,10 +30,62 @@ Obtain API keys from Edamam and replace them in the keys.py file.
 - Click the "Start Search" button to initiate the recipe search.
 
 #### 3. Code Flow:
+##### RecipeSearchApp Class:
+- ##### Inheritance:
+  - Inherits from the tk.Tk class.
+- ##### Initialization:
+  - The constructor (__init__) sets up the main application window titled "Recipe Search."
+- ##### Widgets:
+  - Query Entry:
+    - A tk.Entry widget for entering the search query.
+- ##### Meal Type Dropdown:
+  - A ttk.Combobox widget for selecting the meal type (e.g., Breakfast, Lunch, Dinner).
+- ##### Calories Range:
+  - Two tk.Entry widgets for entering minimum and maximum calories, with a dash label in between.
+- ##### Sort By Dropdown:
+  - A ttk.Combobox widget for selecting the sorting criteria (e.g., Meal type, Ingredients, Calories).
+- ##### Start Search Button:
+  - A tk.Button widget triggering the search functionality.
+- ##### Result Text:
+  - A scrolledtext.ScrolledText widget for displaying the search results.
+- ##### Methods:
+  - start_search:
+    - Retrieves input values (query, meal type, calories range, sort criteria) and initiates the recipe search.
+  - search_edamam_recipes:
+    - Constructs a URL with parameters for the Edamam API, makes a request, and returns a list of recipes.
+  - display_search_results:
+    - Takes a list of recipes, processes and sorts the data, and displays the results in the ScrolledText widget.
 
-- The start_search method handles user input validation and initiates the API call.
-- The search_edamam_recipes method constructs API parameters and makes the request.
-- Results are processed and displayed using the display_search_results method.
+### Main Code:
+- ##### Execution:
+  - Creates an instance of the RecipeSearchApp class.
+  - Invokes the mainloop method to start the GUI event loop.
+#### External Libraries:
+- ##### tkinter:
+  - Used for creating the GUI components.
+- ##### requests:
+  - Used for making HTTP requests to the Edamam API.
+- ##### keys:
+  - Assumes the existence of a module or file named keys containing API credentials.
+- ##### PIL (Pillow):
+  - Used for working with images.
+- ##### io:
+  - Used for handling input/output operations.
+- ##### pandas:
+  - Used for creating and manipulating dataframes.
+
+#### API Integration:
+- ##### Edamam API:
+  - Utilizes the Edamam API for recipe search based on user input.
+  - Retrieves information such as recipe label, calories, images, ingredient lines, meal type, and yield.
+#### User Input Handling:
+- Validates user inputs, handles errors related to calories, and provides feedback to the user.
+#### Data Processing:
+- Creates a Pandas dataframe to organize and sort recipe data.
+- Sorts recipes based on specified criteria (Meal type, Ingredients, Calories).
+#### GUI Design:
+- A simple and intuitive GUI design for entering search parameters and displaying search results.
+
 
 #### 4. API Keys:
 
