@@ -1,21 +1,24 @@
 # my-first-recipe-app
 
-A simple Python application built using Tkinter to search for recipes using the Edamam Recipe API.
+A Python application built using Tkinter to search for recipes using the Edamam Recipe API.
 
 ## Features
 
-- Search for recipes based on query, meal type, calories range, and sorting options.
-- Display recipe details including name, calories, ingredients, and an optional image.
+- Search for recipes based on a query, meal type, calories range, and sorting options.
+- Display recipe details including name, calories per serving, meal type, and ingredients.
+- Use a read-only dropdown menu for meal types and a more flexible calories entry.
+- Sort search results by meal type, number of ingredients, or calories per serving.
+- Display search progress and handle invalid input gracefully.
 
 ## Prerequisites
 
 Before running the application, make sure you have the following:
 
 - Python 3 installed on your machine.
-- `requests` library installed. You can install it using:
+- The `requests`, `PIL`, and `pandas` libraries installed. You can install them using:
 
   ```bash
-  pip install requests
+  pip install requests pillow pandas
 
 # Getting Started
 
