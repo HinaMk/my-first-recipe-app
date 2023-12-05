@@ -178,17 +178,3 @@ class RecipeSearchApp(tk.Tk):
 if __name__ == "__main__":
     app = RecipeSearchApp()
     app.mainloop()
-
-
-# Added scroll bar to the result text box
-# Fixed the bug where "Any" would not pull results
-# Added drop down menu for sorting
-# Replaced the two search buttons with one search button
-# Fix sorting functionality?
-# Images not displaying in the text box anymore!
-
-# CH: Nov 28
-# Added meal type to the results
-# added number of servings so we can calculate calories per serving
-# Fixed images but it turns out none of the recipes have valid image URLs anymore, so I took that out again (Too bad :(
-# Added a dataframe to store the results and sort them
