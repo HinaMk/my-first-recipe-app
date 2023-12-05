@@ -41,12 +41,13 @@ python recipe_search_app.py
 ## API Keys
 This application requires API keys from Edamam. You'll need to get your own API key and application ID and replace them in the keys.py file.
   ### keys.py
-
+```
 app_id = "YOUR_EDAMAM_APP_ID"
 key = "YOUR_EDAMAM_API_KEY"
-
+```
 # App Screenshots
 <img width="388" alt="Screenshot 2023-12-05 at 12 39 53 PM" src="https://github.com/HinaMk/my-first-recipe-app/assets/143449380/62c2ab77-e2a5-4af5-9ee6-1419dc71cd46">
+
 <img width="388" alt="Screenshot 2023-12-05 at 12 40 27 PM" src="https://github.com/HinaMk/my-first-recipe-app/assets/143449380/a4262eee-63c6-4197-bcbc-342e55c59fba">
 
 
