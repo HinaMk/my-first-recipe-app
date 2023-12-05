@@ -4,6 +4,9 @@ import requests
 import keys
 import tkinter.scrolledtext as scrolledtext
 import urllib.parse 
+from PIL import Image, ImageTk
+import io
+import pandas as pd
 
 
 # Base URL
@@ -25,7 +28,10 @@ class RecipeSearchApp(tk.Tk):
         self.meal_type_label.grid(row=1, column=0, padx=10, pady=10, sticky="e")
         self.meal_type_var = tk.StringVar(self)
         self.meal_type_var.set("Any")  # Default value
-        self.meal_type_dropdown = ttk.Combobox(self, textvariable=self.meal_type_var, values=["Any", "Breakfast", "Lunch", "Dinner"])
+
+        # CH set to read-only
+        self.meal_type_dropdown = ttk.Combobox(self, textvariable=self.meal_type_var, state='readonly',
+                                        values=["Any", "Breakfast", "Lunch", "Dinner"])
         self.meal_type_dropdown.grid(row=1, column=1, padx=10, pady=10, sticky="ew", columnspan=2)
 
         # Calories Range
@@ -54,7 +60,7 @@ class RecipeSearchApp(tk.Tk):
         self.start_search_button = tk.Button(self, text="Start Search", command=self.start_search)
         self.start_search_button.grid(row=4, column=0, columnspan=3, padx=10, pady=10, sticky="ew")
         
-        self.result_text = scrolledtext.ScrolledText(self, height=10, width=50, wrap="word")
+        self.result_text = scrolledtext.ScrolledText(self, height=30, width=50, wrap="word") # CH: made taller
         self.result_text.grid(row=5, column=0, columnspan=3, padx=10, pady=10, sticky="nsew")
 
     def start_search(self):
@@ -64,15 +70,37 @@ class RecipeSearchApp(tk.Tk):
         calories_max = self.calories_max_entry.get()
         sort_by = self.sort_by_var.get()
 
-        # Determine the search type based on user input
-        search_type = "meal" if meal_type != "Any" else "calories"
+        self.result_text.insert(tk.END, "Searching...\n")
 
-        recipes = self.search_edamam_recipes(query, meal_type=meal_type, calories=f"{calories_min}-{calories_max}", sort_by=sort_by)
+        if calories_max != "" and calories_min == "": # CH: if max is not empty and min is empty
+            calories_min = "0"
+
+        def is_digit(n):
+            try:
+                int(n)
+                return True
+            except ValueError:
+                return  False
+
+        # if min >= max, or not all digits, raise error
+        if calories_max != "" and calories_min != "":
+            if not is_digit(calories_min) or not is_digit(calories_max):
+                self.result_text.delete("1.0", tk.END)
+                self.result_text.insert(tk.END, "Calories must be numbers\n")
+                return
+            if int(calories_min) >= int(calories_max):
+                self.result_text.delete("1.0", tk.END)
+                self.result_text.insert(tk.END, "Invalid calories range, min must be smaller than max\n")
+                return
+
+        calories_str = f"{calories_min}-{calories_max}" if calories_min != "" and calories_max != "" else "0-2000"  # maybe use ""?
+        recipes = self.search_edamam_recipes(query, meal_type=meal_type, calories=calories_str, sort_by=sort_by)
     
-        if search_type == "meal":
-            recipes = self.search_edamam_recipes(query, meal_type=meal_type, sort_by=sort_by)
-        elif search_type == "calories":
-            recipes = self.search_edamam_recipes(query, meal_type=meal_type, calories=f"{calories_min}-{calories_max}", sort_by=sort_by)
+        
+        #if search_type == "meal":
+        #    recipes = self.search_edamam_recipes(query, meal_type=meal_type, sort_by=sort_by)
+        #elif search_type == "calories":
+        #    recipes = self.search_edamam_recipes(query, meal_type=meal_type, calories=f"{calories_min}-{calories_max}", sort_by=sort_by)
 
         self.display_search_results(recipes)
 
@@ -82,7 +110,7 @@ class RecipeSearchApp(tk.Tk):
             "app_id": keys.app_id,
             "app_key": keys.key,
             "type": "any",
-            "field": ["label", "calories", "images", "ingredientLines", "totalCO2Emissions", "yield", "totalTime"],
+            "field": ["label", "calories", "images", "ingredientLines", "mealType", "yield"],  # CH added mealType and yield 
             "mealType": meal_type,
             "calories": calories,
             "sort": sort_by
@@ -104,19 +132,44 @@ class RecipeSearchApp(tk.Tk):
             return None
 
     def display_search_results(self, recipes):
+        rows = []   # CH: create a list to store the rows
         if recipes:
             self.result_text.delete("1.0", tk.END)
             for recipe in recipes:
                 label = recipe['recipe']['label']
                 calories = recipe['recipe']['calories']
                 ingredients = recipe['recipe']['ingredientLines']
-                image = recipe['recipe'].get('image', 'No image available')
+                meal_type_list = recipe['recipe']['mealType'] 
+                meal_type = ", ".join(meal_type_list) 
+                num_servings = recipe['recipe']['yield']  
+                
+                # add the recipe data in form of a dict to the list  
+                rows.append({'label': label, 'calories': int(calories / num_servings), 
+                    'mealType': meal_type, 'ingredients': ingredients, 
+                    'num_ingredients': len(ingredients)})
+            df = pd.DataFrame(rows) # create a dataframe from the list of rows
+            
+            # Sort the dataframe by the sort_by_var widget value
+            sort_by = self.sort_by_var.get()
+            if sort_by == "Meal type":
+                df = df.sort_values(by=['mealType'])
+            elif sort_by == "Ingredients":
+                df = df.sort_values(by=['num_ingredients'], ascending=True) # small to high
+            elif sort_by == "Calories":
+                df = df.sort_values(by=['calories'], ascending=True) # small to high
 
-                result_text = f"Recipe name: {label}\nCalories: {calories} kcal\nIngredients:\n"
+            # Loop through the dataframe, get the cell values for each row and print the results
+            for index, row in df.iterrows(): # grab each row as a Series called row
+                label = row['label']
+                calories = row['calories']
+                ingredients = row['ingredients']
+                meal_type = row['mealType']
+                
+                result_text = f"Recipe name: {label}\nCalories per serving: {calories} kcal\nMeal Type: {meal_type}\nIngredients:\n"
                 for ingredient in ingredients:
                     result_text += f"- {ingredient}\n"
-                result_text += f"Image: {image}\n\n"
                 self.result_text.insert(tk.END, result_text)
+                self.result_text.insert(tk.END, "\n")
         else:
             self.result_text.delete("1.0", tk.END)
             self.result_text.insert(tk.END, "No recipes found")
@@ -125,3 +178,17 @@ class RecipeSearchApp(tk.Tk):
 if __name__ == "__main__":
     app = RecipeSearchApp()
     app.mainloop()
+
+
+# Added scroll bar to the result text box
+# Fixed the bug where "Any" would not pull results
+# Added drop down menu for sorting
+# Replaced the two search buttons with one search button
+# Fix sorting functionality?
+# Images not displaying in the text box anymore!
+
+# CH: Nov 28
+# Added meal type to the results
+# added number of servings so we can calculate calories per serving
+# Fixed images but it turns out none of the recipes have valid image URLs anymore, so I took that out again (Too bad :(
+# Added a dataframe to store the results and sort them
