@@ -43,8 +43,9 @@ app_id = "YOUR_EDAMAM_APP_ID"
 key = "YOUR_EDAMAM_API_KEY"
 
 # App Screenshots
-<img width="387" alt="Screenshot 2023-12-05 at 12 32 16 PM" src="https://github.com/HinaMk/my-first-recipe-app/assets/143449380/7499c5b3-5e93-4518-8083-d55a6caf255e">
-<img width="384" alt="Screenshot 2023-12-05 at 12 32 52 PM" src="https://github.com/HinaMk/my-first-recipe-app/assets/143449380/266aa1e5-2611-44ad-b1a7-543830c29ac9">
+<img width="388" alt="Screenshot 2023-12-05 at 12 39 53 PM" src="https://github.com/HinaMk/my-first-recipe-app/assets/143449380/62c2ab77-e2a5-4af5-9ee6-1419dc71cd46">
+<img width="388" alt="Screenshot 2023-12-05 at 12 40 27 PM" src="https://github.com/HinaMk/my-first-recipe-app/assets/143449380/a4262eee-63c6-4197-bcbc-342e55c59fba">
+
 
 # License
 This project is licensed under the MIT License - see the LICENSE file for details.
