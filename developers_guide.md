@@ -7,12 +7,12 @@ Welcome to the developer's guide for my Recipe Search App. This document will gi
 The Recipe Search App is designed to allow users to search for recipes using the Edamam Recipe API. Key features include searching based on a query, meal type, calorie range, sorting options, and displaying detailed recipe information.
 
 ## Install/Deployment/Admin Issues
-Assuming the developer has already read the user's guide, the following steps detail additional considerations for deployment and administration:
+After reading the user's guide, please ensure you have the following installed for deployment and administration:
 
-1. Install Dependencies:
-Ensure that Python 3 is installed on the machine.
-Install required libraries using:
-pip install -r requirements.txt
+1. Ensure that Python 3 is installed on the machine. Before running the application, make sure you have the following:
+The requests, PIL, and pandas libraries installed.
+
+    - You can install them using: `` pip install requests pillow pandas ``
 
 2. API Keys:
 Obtain API keys from Edamam and replace them in the keys.py file.
